@@ -28,7 +28,6 @@ def build_price_curve(low_off, high_off, low_on, high_on):
 # Assignment 2
 def assignment_2():
     prices = [4,  6,  3,  5,  7,  7,  6,  5,  4,  4,  6,  5,  3,  6,  7,  7,  3, 14, 16, 16,  4,  6,  3,  6]
-    # prices = build_price_curve(3, 7, 12, 18)
     problem = LpProblem('Demand Response', LpMinimize)
     hours = [x for x in range(0, 24)]
     d = LpVariable.dict('Dishwasher', hours, lowBound=0, cat=LpInteger)
@@ -57,6 +56,73 @@ def assignment_2():
     print(value(problem.objective))
     # TODO: Consider non-shiftables, add their price according to price curve
 
+def assignment_3():
+    prices = [4,  6,  3,  5,  7,  7,  6,  5,  4,  4,  6,  5,  3,  6,  7,  7,  3, 14, 16, 16,  4,  6,  3,  6]
+    problem = LpProblem('Demand Response', LpMinimize)
+    hours = [x for x in range(0, 24)]
+    d = LpVariable.dict('Dishwasher', hours, lowBound=0, cat=LpInteger)
+    l = LpVariable.dict('Laundry machine', hours, lowBound=0, cat=LpInteger)
+    c = LpVariable.dict('Clothes dryer', hours, lowBound=0, cat=LpInteger)
+    e = LpVariable.dict('Electric vehicle', hours, lowBound=0, cat=LpInteger)
+    v = LpVariable.dict('Vacuum', hours, lowBound=0, cat=LpInteger)
+    h = LpVariable.dict('Hair Dryer', hours, lowBound=0, cat=LpInteger)
+    m = LpVariable.dict('Microwave', hours, lowBound=0, cat=LpInteger)
+
+    # Objective function
+    problem += lpSum([prices[i]*(d[i] + l[i] + c[i] + e[i] + v[i] + h[i] + m[i]) for i in hours]), 'Objective Function'
+
+    # Constraints
+    problem.addConstraint(lpSum(d[i] for i in hours) == 1.44*30), 'Dishwasher Constraint'
+    problem.addConstraint(lpSum(l[i] for i in hours) == 1.94*30), 'Laundry Machine Constraint'
+    problem.addConstraint(lpSum(c[i] for i in hours) == 2.5*30), 'Clothes Dryer Constraint'
+    problem.addConstraint(lpSum(e[i] for i in hours) == 9.9*20), 'Electric Vehicle Constraint'  # Assume 2/3rds of households own EV
+    problem.addConstraint(lpSum(v[i] for i in hours) == 0.23*30), 'Vacuum Constraint'
+    problem.addConstraint(lpSum(h[i] for i in hours) == 0.25*30), 'Hair Dryer Constraint'
+    problem.addConstraint(lpSum(m[i] for i in hours) == 0.6*30), 'Microwave Constraint'
+
+    problem.solve()
+    for v in problem.variables():
+        print(v.name + " " + str(v.varValue))
+    print(value(problem.objective))
+    # TODO: Consider non-shiftables, add their price according to price curve
+    # Since we don't have to consider grid load, every household can use the same appliances at the same time
+    # to save money (everyone uses the optimal solution).
+
+def assignment_4():
+    prices = [4, 6, 3, 5, 7, 7, 6, 5, 4, 4, 6, 5, 3, 6, 7, 7, 3, 14, 16, 16, 4, 6, 3, 6]
+    problem = LpProblem('Demand Response', LpMinimize)
+    hours = [x for x in range(0, 24)]
+    L = 9
+    d = LpVariable.dict('Dishwasher', hours, lowBound=0, cat=LpInteger)
+    l = LpVariable.dict('Laundry machine', hours, lowBound=0, cat=LpInteger)
+    c = LpVariable.dict('Clothes dryer', hours, lowBound=0, cat=LpInteger)
+    e = LpVariable.dict('Electric vehicle', hours, lowBound=0, cat=LpInteger)
+    v = LpVariable.dict('Vacuum', hours, lowBound=0, cat=LpInteger)
+    h = LpVariable.dict('Hair Dryer', hours, lowBound=0, cat=LpInteger)
+    m = LpVariable.dict('Microwave', hours, lowBound=0, cat=LpInteger)
+
+    # Objective function
+    problem += lpSum(
+        [prices[i] * (d[i] + l[i] + c[i] + e[i] + v[i] + h[i] + m[i])
+         + lpSum(d[i] + l[i] + c[i] + e[i] + v[i] + h[i] + m[i]) for i in hours]), 'Objective Function'
+
+    # Constraints
+    problem.addConstraint(lpSum(d[i] for i in hours) == 1.44), 'Dishwasher Constraint'
+    problem.addConstraint(lpSum(l[i] for i in hours) == 1.94), 'Laundry Machine Constraint'
+    problem.addConstraint(lpSum(c[i] for i in hours) == 2.5), 'Clothes Dryer Constraint'
+    problem.addConstraint(lpSum(e[i] for i in hours) == 9.9), 'Electric Vehicle Constraint'
+    problem.addConstraint(lpSum(v[i] for i in hours) == 0.23), 'Vacuum Constraint'
+    problem.addConstraint(lpSum(h[i] for i in hours) == 0.25), 'Hair Dryer Constraint'
+    problem.addConstraint(lpSum(m[i] for i in hours) == 0.6), 'Microwave Constraint'
+    for i in hours:
+        problem.addConstraint(d[i] + l[i] + c[i] + e[i] + v[i] + h[i] + m[i] <= L), 'Maximum Load Constraint'
+
+    problem.solve()
+    for v in problem.variables():
+        print(v.name + " " + str(v.varValue))
+    print(value(problem.objective))
+    # TODO: Consider non-shiftables, add their price according to price curve
+    # TODO: Maybe add normalization for objective function
 
 if __name__ == '__main__':
-    assignment_2()
+    assignment_4()
