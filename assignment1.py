@@ -39,11 +39,7 @@ def create_input(p: LpProblem):
 
 def flatten(lst: list):
     return [item for sublist in lst for item in sublist]
-"""def create_usage_plots_task_2_4(lst: list):
-    hours = [x for x in range(23)]
-    data = np.array(lst)
-    data = data.flatten()
-    print(data)"""
+
 
 def create_usage_plots_task_2_3(lst: list):
     """Draws a stacked bar chart for the use of household appliances in a neighborhood."""
@@ -128,17 +124,7 @@ def create_usage_plots_task_4(lst: list, thresh: int):
     plt.legend(loc="upper left")
     plt.title("Usage for a single household when operating under a Threshold")
     plt.show()
-    # data = data.T
 
-    # --------------------
-    """times = data[0]
-    usage = data[1]
-    bottom = np.zeros(24)
-    
-
-    for time, use in times, usage:
-        plt.bar([x for x in range(24)], )
-    print(data)"""
 
 # Assignment 2
 def assignment_2():
@@ -282,3 +268,5 @@ def assignment_4():
 
 if __name__ == '__main__':
     assignment_2()
+    # assignment_3()
+    # assignment_4()
