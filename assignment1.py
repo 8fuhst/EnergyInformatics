@@ -168,8 +168,8 @@ def assignment_2():
     problem.solve()
     create_usage_plots_task_2_3([create_input(problem)])
     """for v in problem.variables():
-        print(v.name + " " + str(v.varValue))
-    print(value(problem.objective))"""
+        print(v.name + " " + str(v.varValue))"""
+    print(value(problem.objective))
     # TODO: Consider non-shiftables, add their price according to price curve
 
 
@@ -226,8 +226,8 @@ def assignment_3():
         output_dict[f"Household {i}"] = appliances_list
         input_list.append(create_input(problem))
         """for v in problem.variables():
-            print(v.name + " " + str(v.varValue))
-        print(value(problem.objective))"""
+            print(v.name + " " + str(v.varValue))"""
+        print(value(problem.objective))
 
     values = output_dict.values()
     amount_evs = sum('EV' in item for item in values)
@@ -274,11 +274,11 @@ def assignment_4():
     problem.solve()
     create_usage_plots_task_4(create_input(problem), L)
     """for v in problem.variables():
-        print(v.name + " " + str(v.varValue))
-    print(value(problem.objective))"""
+        print(v.name + " " + str(v.varValue))"""
+    print(value(problem.objective))
     # TODO: Consider non-shiftables, add their price according to price curve
     # TODO: Maybe add normalization for objective function
 
 
 if __name__ == '__main__':
-    assignment_4()
+    assignment_2()
