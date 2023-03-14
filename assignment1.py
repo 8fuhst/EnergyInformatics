@@ -103,6 +103,7 @@ def create_usage_plots_task_2_3(lst: list):
 
 
 def create_usage_plots_task_4(lst: list, thresh: int):
+
     data = flatten(lst)
     for i, x in enumerate(data):
         if type(data[i]) is str:
@@ -130,13 +131,13 @@ def assignment_2():
     prices = [4,  6,  3,  5,  7,  7,  6,  5,  4,  4,  6,  5,  3,  6,  7,  7,  3, 14, 16, 16,  4,  6,  3,  6]
     problem = LpProblem('Demand Response', LpMinimize)
     hours = [x for x in range(0, 24)]
-    d = LpVariable.dict('Dishwasher', hours, lowBound=0, cat=LpInteger)
-    l = LpVariable.dict('LaundryMachine', hours, lowBound=0, cat=LpInteger)
-    c = LpVariable.dict('ClothesDryer', hours, lowBound=0, cat=LpInteger)
-    e = LpVariable.dict('ElectricVehicle', hours, lowBound=0, cat=LpInteger)
-    v = LpVariable.dict('Vacuum', hours, lowBound=0, cat=LpInteger)
-    h = LpVariable.dict('HairDryer', hours, lowBound=0, cat=LpInteger)
-    m = LpVariable.dict('Microwave', hours, lowBound=0, cat=LpInteger)
+    d = LpVariable.dict('Dishwasher', hours, lowBound=0)
+    l = LpVariable.dict('LaundryMachine', hours, lowBound=0)
+    c = LpVariable.dict('ClothesDryer', hours, lowBound=0)
+    e = LpVariable.dict('ElectricVehicle', hours, lowBound=0)
+    v = LpVariable.dict('Vacuum', hours, lowBound=0)
+    h = LpVariable.dict('HairDryer', hours, lowBound=0)
+    m = LpVariable.dict('Microwave', hours, lowBound=0)
 
     # Objective function
     problem += lpSum([prices[i]*(d[i] + l[i] + c[i] + e[i] + v[i] + h[i] + m[i]) for i in hours]), 'Objective Function'
@@ -152,6 +153,7 @@ def assignment_2():
 
     problem.solve()
     create_usage_plots_task_2_3([create_input(problem)])
+
     print(value(problem.objective))
     # TODO: Consider non-shiftables, add their price according to price curve
 
@@ -182,13 +184,13 @@ def assignment_3():
         appliances_list.append(device_3[0])
 
         problem = LpProblem('Demand Response', LpMinimize)
-        d = LpVariable.dict('Dishwasher', hours, lowBound=0, cat=LpInteger)
-        l = LpVariable.dict('LaundryMachine', hours, lowBound=0, cat=LpInteger)
-        c = LpVariable.dict('ClothesDryer', hours, lowBound=0, cat=LpInteger)
-        e = LpVariable.dict('ElectricVehicle', hours, lowBound=0, cat=LpInteger)
-        d1 = LpVariable.dict(device_1[0], hours, lowBound=0, cat=LpInteger) # device 1
-        d2 = LpVariable.dict(device_2[0], hours, lowBound=0, cat=LpInteger) # device 2
-        d3 = LpVariable.dict(device_3[0], hours, lowBound=0, cat=LpInteger) # device 3
+        d = LpVariable.dict('Dishwasher', hours, lowBound=0)
+        l = LpVariable.dict('LaundryMachine', hours, lowBound=0)
+        c = LpVariable.dict('ClothesDryer', hours, lowBound=0)
+        e = LpVariable.dict('ElectricVehicle', hours, lowBound=0)
+        d1 = LpVariable.dict(device_1[0], hours, lowBound=0) # device 1
+        d2 = LpVariable.dict(device_2[0], hours, lowBound=0) # device 2
+        d3 = LpVariable.dict(device_3[0], hours, lowBound=0) # device 3
 
         # Objective function
         problem += lpSum([prices[i]*(d[i] + l[i] + c[i] + e[i] + d1[i] + d2[i] + d3[i]) for i in hours]), 'Objective Function'
@@ -255,20 +257,19 @@ def assignment_4():
     non_shiftable_consumption, non_shiftable_prices = non_shiftables_task_4()
     prices = [4, 6, 3, 5, 7, 7, 6, 5, 4, 4, 6, 5, 3, 6, 7, 7, 3, 14, 16, 16, 4, 6, 3, 6]
     problem = LpProblem('Demand Response', LpMinimize)
-    hours = [x for x in range(0, 24)]
+    hours = list(range(24))
     L = 9
-    d = LpVariable.dict('Dishwasher', hours, lowBound=0, cat=LpInteger)
-    l = LpVariable.dict('LaundryMachine', hours, lowBound=0, cat=LpInteger)
-    c = LpVariable.dict('ClothesDryer', hours, lowBound=0, cat=LpInteger)
-    e = LpVariable.dict('ElectricVehicle', hours, lowBound=0, cat=LpInteger)
-    v = LpVariable.dict('Vacuum', hours, lowBound=0, cat=LpInteger)
-    h = LpVariable.dict('HairDryer', hours, lowBound=0, cat=LpInteger)
-    m = LpVariable.dict('Microwave', hours, lowBound=0, cat=LpInteger)
+    d = LpVariable.dict('Dishwasher', hours, lowBound=0, cat='Continuous')
+    l = LpVariable.dict('LaundryMachine', hours, lowBound=0, cat='Continuous')
+    c = LpVariable.dict('ClothesDryer', hours, lowBound=0, cat='Continuous')
+    e = LpVariable.dict('ElectricVehicle', hours, lowBound=0, cat='Continuous')
+    v = LpVariable.dict('Vacuum', hours, lowBound=0, cat='Continuous')
+    h = LpVariable.dict('HairDryer', hours, lowBound=0, cat='Continuous')
+    m = LpVariable.dict('Microwave', hours, lowBound=0, cat='Continuous')
 
     # Objective function
     problem += lpSum(
-        [prices[i] * (d[i] + l[i] + c[i] + e[i] + v[i] + h[i] + m[i])
-         + lpSum(d[i] + l[i] + c[i] + e[i] + v[i] + h[i] + m[i]) for i in hours]), 'Objective Function'
+        [(prices[i] * (d[i] + l[i] + c[i] + e[i] + v[i] + h[i] + m[i])) for i in hours])
 
     # Constraints
     problem.addConstraint(lpSum(d[i] for i in hours) == 1.44), 'Dishwasher Constraint'
@@ -282,12 +283,12 @@ def assignment_4():
         problem.addConstraint(d[i] + l[i] + c[i] + e[i] + v[i] + h[i] + m[i] <= L-non_shiftable_consumption[i]), 'Maximum Load Constraint'
 
     problem.solve()
+
     create_usage_plots_task_4(create_input(problem), L)
     print(value(problem.objective))
     # TODO: Consider non-shiftables, add their price according to price curve
-    # TODO: Maybe add normalization for objective function
 
 
 if __name__ == '__main__':
-    assignment_3()
+    assignment_4()
     # non_shiftables_task_4()
