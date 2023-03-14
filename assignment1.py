@@ -39,11 +39,7 @@ def create_input(p: LpProblem):
 
 def flatten(lst: list):
     return [item for sublist in lst for item in sublist]
-"""def create_usage_plots_task_2_4(lst: list):
-    hours = [x for x in range(23)]
-    data = np.array(lst)
-    data = data.flatten()
-    print(data)"""
+
 
 def create_usage_plots_task_2_3(lst: list):
     """Draws a stacked bar chart for the use of household appliances in a neighborhood."""
@@ -62,7 +58,6 @@ def create_usage_plots_task_2_3(lst: list):
     for l in flat_list:
         if l not in count_dict.keys():
             count_dict[l] = flat_list.count(l)
-    # print(count_dict)
     for k, v in count_dict.items():
         _, k_2 = k.split("_")
         k_2 = int(k_2)
@@ -121,24 +116,13 @@ def create_usage_plots_task_4(lst: list, thresh: int):
     for e, i in enumerate(data.T[0]):
         print(i)
         sum_list[int(i)] += float(data.T[1][e])
-    # print(sum_list)
     plt.bar([x for x in range(24)], sum_list, color="grey", label="Usage in kWh")
     plt.plot([x for x in range(24)], thresh, color="black", label="Max. Capacity")
     plt.xticks([x for x in range(24)])
     plt.legend(loc="upper left")
     plt.title("Usage for a single household when operating under a Threshold")
     plt.show()
-    # data = data.T
 
-    # --------------------
-    """times = data[0]
-    usage = data[1]
-    bottom = np.zeros(24)
-    
-
-    for time, use in times, usage:
-        plt.bar([x for x in range(24)], )
-    print(data)"""
 
 # Assignment 2
 def assignment_2():
@@ -167,9 +151,7 @@ def assignment_2():
 
     problem.solve()
     create_usage_plots_task_2_3([create_input(problem)])
-    """for v in problem.variables():
-        print(v.name + " " + str(v.varValue))
-    print(value(problem.objective))"""
+    print(value(problem.objective))
     # TODO: Consider non-shiftables, add their price according to price curve
 
 
@@ -225,21 +207,15 @@ def assignment_3():
         total += value(problem.objective)
         output_dict[f"Household {i}"] = appliances_list
         input_list.append(create_input(problem))
-        """for v in problem.variables():
-            print(v.name + " " + str(v.varValue))
-        print(value(problem.objective))"""
+        print(value(problem.objective))
 
     values = output_dict.values()
     amount_evs = sum('EV' in item for item in values)
-    # print(output_dict)
-    # print(input_list)
     create_usage_plots_task_2_3(input_list)
     print(f"Amount of EVs: {amount_evs}")
     print(f"Share of electric vehicles: {amount_evs/30}")
     print(f"Total price of all households for the day: {total}")  # Total price of all households over the day
     # TODO: Consider non-shiftables, add their price according to price curve
-    # Since we don't have to consider grid load, every household can use the same appliances at the same time
-    # to save money (everyone uses the optimal solution).
 
 
 def assignment_4():
@@ -273,12 +249,12 @@ def assignment_4():
 
     problem.solve()
     create_usage_plots_task_4(create_input(problem), L)
-    """for v in problem.variables():
-        print(v.name + " " + str(v.varValue))
-    print(value(problem.objective))"""
+    print(value(problem.objective))
     # TODO: Consider non-shiftables, add their price according to price curve
     # TODO: Maybe add normalization for objective function
 
 
 if __name__ == '__main__':
-    assignment_4()
+    assignment_2()
+    # assignment_3()
+    # assignment_4()
