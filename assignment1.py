@@ -116,6 +116,7 @@ def create_usage_plots_task_4(lst: list, thresh: int):
     for e, i in enumerate(data.T[0]):
         print(i)
         sum_list[int(i)] += float(data.T[1][e])
+    # print(sum_list)
     plt.bar([x for x in range(24)], sum_list, color="grey", label="Usage in kWh")
     plt.plot([x for x in range(24)], thresh, color="black", label="Max. Capacity")
     plt.xticks([x for x in range(24)])
@@ -216,9 +217,42 @@ def assignment_3():
     print(f"Share of electric vehicles: {amount_evs/30}")
     print(f"Total price of all households for the day: {total}")  # Total price of all households over the day
     # TODO: Consider non-shiftables, add their price according to price curve
+    # Since we don't have to consider grid load, every household can use the same appliances at the same time
+    # to save money (everyone uses the optimal solution).
+
+def non_shiftables_task_4():
+    prices = [4, 6, 3, 5, 7, 7, 6, 5, 4, 4, 6, 5, 3, 6, 7, 7, 3, 14, 16, 16, 4, 6, 3, 6]
+    consumption_per_hour = [0.0 for x in range(0, 24)]
+    price_for_non_shiftable = [0.0 for x in range(0, 24)]
+    # price for non-shiftable devices are fixed that the price for the non-shiftable devices
+    # is the same in task 2 and 4
+    lightning = 1.5/10 # usage per hour between 10.00 - 20.00
+    heating = 8/24
+    refrigerator = 2.64/24 # household has two refigerators
+    electric_stove = 3.9 /24
+    tv = 0.4 /5  # in this example tv is on between 18.00 - 23.00
+    computers = 1.8/24 # in this task 3 computers
+
+    for i in range(len(consumption_per_hour)):
+        fixed_consumption_per_hour = heating + electric_stove + computers + refrigerator
+        if 9 <= i <= 19:
+            fixed_consumption_per_hour = fixed_consumption_per_hour + lightning
+        if 17 <= i <= 22:
+            fixed_consumption_per_hour = fixed_consumption_per_hour + tv
+
+        consumption_per_hour[i] = fixed_consumption_per_hour
+        price_for_non_shiftable[i] = prices[i] * fixed_consumption_per_hour
+    total_price = np.sum(price_for_non_shiftable)
+    print('Price for non-shiftable devices: ', total_price)
+    return consumption_per_hour, price_for_non_shiftable
+
+
+
+
 
 
 def assignment_4():
+    non_shiftable_consumption, non_shiftable_prices = non_shiftables_task_4()
     prices = [4, 6, 3, 5, 7, 7, 6, 5, 4, 4, 6, 5, 3, 6, 7, 7, 3, 14, 16, 16, 4, 6, 3, 6]
     problem = LpProblem('Demand Response', LpMinimize)
     hours = [x for x in range(0, 24)]
@@ -245,7 +279,7 @@ def assignment_4():
     problem.addConstraint(lpSum(h[i] for i in hours) == 0.25), 'Hair Dryer Constraint'
     problem.addConstraint(lpSum(m[i] for i in hours) == 0.6), 'Microwave Constraint'
     for i in hours:
-        problem.addConstraint(d[i] + l[i] + c[i] + e[i] + v[i] + h[i] + m[i] <= L), 'Maximum Load Constraint'
+        problem.addConstraint(d[i] + l[i] + c[i] + e[i] + v[i] + h[i] + m[i] <= L-non_shiftable_consumption[i]), 'Maximum Load Constraint'
 
     problem.solve()
     create_usage_plots_task_4(create_input(problem), L)
@@ -255,6 +289,5 @@ def assignment_4():
 
 
 if __name__ == '__main__':
-    assignment_2()
-    # assignment_3()
-    # assignment_4()
+    assignment_3()
+    # non_shiftables_task_4()
