@@ -1,6 +1,7 @@
 import random
 import matplotlib.pyplot as plt
 import numpy as np
+import sys
 from pulp import *
 
 
@@ -95,7 +96,7 @@ def create_usage_plots_task_2(lst: list):
     plt.show()
 
 
-def create_usage_plots_task_2_3(lst: list):
+def create_usage_plots_task_3(lst: list):
     """Draws a stacked bar chart for the use of household appliances in a neighborhood."""
     variables_list = [[item[0] for item in items] for items in lst]
     flat_list = flatten(variables_list)
@@ -157,6 +158,10 @@ def create_usage_plots_task_2_3(lst: list):
 
 
 def create_usage_plots_task_4(lst: list, thresh: int):
+    """
+    Used to create the plot for task 4
+
+    """
 
     data = flatten(lst)
     for i, x in enumerate(data):
@@ -276,13 +281,11 @@ def assignment_3():
     HairDryer = sum('HairDryer' in item for item in values)
     PhoneCharger = sum('PhoneCharger' in item for item in values)
     CeilingFan = sum('CeilingFan' in item for item in values)
-    create_usage_plots_task_2_3(input_list)
+    create_usage_plots_task_3(input_list)
     print(f"Amount of EVs: {amount_evs}, Vacuum {Vacuum}, HairDryer {HairDryer} PhoneCharger {PhoneCharger} CeilingFan {CeilingFan} Microwave {Microwave}")
     print(f"Share of electric vehicles: {amount_evs/30}")
     print(f"Total price of all households for the day: {total}")  # Total price of all households over the day
-    # TODO: Consider non-shiftables, add their price according to price curve
-    # Since we don't have to consider grid load, every household can use the same appliances at the same time
-    # to save money (everyone uses the optimal solution).
+
 
 def non_shiftables_task_basic():
     prices = [4, 6, 3, 5, 7, 7, 6, 5, 4, 4, 6, 5, 3, 6, 7, 7, 3, 14, 16, 16, 4, 6, 3, 6]
@@ -350,9 +353,15 @@ def assignment_4():
 
     create_usage_plots_task_4(create_input(problem), L)
     print(value(problem.objective))
-    # TODO: Consider non-shiftables, add their price according to price curve
 
 
 if __name__ == '__main__':
-    assignment_3()
-    # non_shiftables_task_basic()
+    
+    if sys.argv[1] == "2":
+        assignment_2()
+    elif sys.argv[1] == "3":
+        assignment_3()
+    elif sys.argv[1] == "4":
+        assignment_4()
+    # assignment_3()
+    # assignment_4()
